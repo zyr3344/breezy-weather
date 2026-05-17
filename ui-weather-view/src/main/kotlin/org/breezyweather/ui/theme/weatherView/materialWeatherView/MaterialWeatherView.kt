@@ -89,7 +89,7 @@ class MaterialWeatherView(
             )
         }
         val insets = ViewCompat.getRootWindowInsets(this)
-        val i = insets?.getInsets(WindowInsetsCompat.Type.systemBars() + WindowInsetsCompat.Type.displayCutout())
+        val i = insets?.getInsets(WindowInsetsCompat.Type.systemBars())
 
         // TODO: Arbitrary value. If too high, will blink. See also #2241 for attempt at a more effective fix
         mFirstCardMarginTop = ((i?.top ?: 0) + 500) // 0.66

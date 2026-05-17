@@ -20,6 +20,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
@@ -37,6 +38,7 @@ abstract class BreezyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
+        allowLayoutInDisplayCutout()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             window.setSystemBarStyle(!isDarkMode)
         }
@@ -90,4 +92,16 @@ abstract class BreezyActivity : AppCompatActivity() {
         get() = lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
     val isActivityResumed: Boolean
         get() = lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+
+    private fun allowLayoutInDisplayCutout() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.attributes = window.attributes.apply {
+                layoutInDisplayCutoutMode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+                } else {
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                }
+            }
+        }
+    }
 }

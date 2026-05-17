@@ -27,14 +27,13 @@ import androidx.core.view.WindowInsetsCompat
  */
 
 /**
- * Apply window insets (system bars and display cutouts) for a view.
+ * Apply window insets for system bars. Display cutouts are intentionally ignored
+ * so landscape content can draw through camera areas.
  */
 fun View.doOnApplyWindowInsets(f: (View, Insets) -> Unit) {
     // Set an actual OnApplyWindowInsetsListener which proxies to the given lambda
     setOnApplyWindowInsetsListener(this) { v, insets ->
-        val i = insets.getInsets(
-            WindowInsetsCompat.Type.systemBars() + WindowInsetsCompat.Type.displayCutout()
-        )
+        val i = insets.getInsets(WindowInsetsCompat.Type.systemBars())
         f(v, i)
         // Always return the insets, so that children can also use them
         insets

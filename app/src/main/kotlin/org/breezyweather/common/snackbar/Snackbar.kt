@@ -344,7 +344,7 @@ class Snackbar private constructor(
             // Do not apply horizontal insets in home fragment
             val isHomeFragment = parent is CoordinatorLayout
             val insets = ViewCompat.getRootWindowInsets(this)
-            val i = insets?.getInsets(WindowInsetsCompat.Type.systemBars() + WindowInsetsCompat.Type.displayCutout())
+            val i = insets?.getInsets(WindowInsetsCompat.Type.systemBars())
             if (i != null) {
                 val rInsets = Rect(
                     if (isHomeFragment) 0 else i.left,
