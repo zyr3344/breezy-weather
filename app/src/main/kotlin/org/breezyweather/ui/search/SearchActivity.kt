@@ -32,7 +32,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -85,6 +84,7 @@ import org.breezyweather.ui.common.composables.SecondarySourcesPreference
 import org.breezyweather.ui.common.widgets.Material3ExpressiveCardListItem
 import org.breezyweather.ui.common.widgets.Material3Scaffold
 import org.breezyweather.ui.common.widgets.Material3SearchBarInputField
+import org.breezyweather.ui.common.widgets.insets.systemBarsWithStatusBarFallback
 import org.breezyweather.ui.settings.preference.LargeSeparatorItem
 import org.breezyweather.ui.settings.preference.composables.RadioButton
 import org.breezyweather.ui.theme.compose.BreezyWeatherTheme
@@ -126,7 +126,7 @@ class SearchActivity : BreezyActivity() {
         Material3Scaffold(
             bottomBar = {
                 BottomAppBar(
-                    windowInsets = WindowInsets.systemBars.only(
+                    windowInsets = systemBarsWithStatusBarFallback().only(
                         WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
                     ),
                     actions = {

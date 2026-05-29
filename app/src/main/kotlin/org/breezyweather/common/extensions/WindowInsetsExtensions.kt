@@ -16,6 +16,8 @@
 
 package org.breezyweather.common.extensions
 
+import android.content.Context
+import android.os.Build
 import android.view.View
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
@@ -33,7 +35,7 @@ import androidx.core.view.WindowInsetsCompat
 fun View.doOnApplyWindowInsets(f: (View, Insets) -> Unit) {
     // Set an actual OnApplyWindowInsetsListener which proxies to the given lambda
     setOnApplyWindowInsetsListener(this) { v, insets ->
-        val i = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        val i = insets.getInsets(WindowInsetsCompat.Type.systemBars()).withLegacyStatusBarFallback(v.context)
         f(v, i)
         // Always return the insets, so that children can also use them
         insets
@@ -57,4 +59,24 @@ fun View.requestApplyInsetsWhenAttached() {
             override fun onViewDetachedFromWindow(v: View) = Unit
         })
     }
+}
+
+val Context.legacyStatusBarHeight: Int
+    get() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return 0
+        }
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        return if (resourceId > 0) {
+            resources.getDimensionPixelSize(resourceId)
+        } else {
+            0
+        }
+    }
+
+private fun Insets.withLegacyStatusBarFallback(context: Context): Insets {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        return this
+    }
+    return Insets.of(left, if (top == 0) context.legacyStatusBarHeight else top, right, bottom)
 }

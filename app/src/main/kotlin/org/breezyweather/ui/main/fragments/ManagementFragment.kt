@@ -38,7 +38,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -111,6 +110,7 @@ import org.breezyweather.ui.common.widgets.Material3ExpressiveCardListItem
 import org.breezyweather.ui.common.widgets.Material3Scaffold
 import org.breezyweather.ui.common.widgets.defaultCardListItemElevation
 import org.breezyweather.ui.common.widgets.insets.BWCenterAlignedTopAppBar
+import org.breezyweather.ui.common.widgets.insets.systemBarsWithStatusBarFallback
 import org.breezyweather.ui.main.MainActivity
 import org.breezyweather.ui.main.MainActivityViewModel
 import org.breezyweather.ui.main.adapters.location.LocationAdapter
@@ -213,7 +213,7 @@ open class ManagementFragment : MainModuleFragment(), TouchReactor {
                             )
                         }
                     },
-                    windowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)
+                    windowInsets = systemBarsWithStatusBarFallback().only(WindowInsetsSides.Top)
                 )
             },
             floatingActionButton = {

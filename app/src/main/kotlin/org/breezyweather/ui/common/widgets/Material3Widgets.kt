@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -59,6 +58,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.breezyweather.R
+import org.breezyweather.ui.common.widgets.insets.systemBarsWithStatusBarFallback
 import kotlin.math.ln
 
 // helper.
@@ -95,7 +95,7 @@ fun Material3Scaffold(
     floatingActionButtonPosition: FabPosition = FabPosition.End,
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
-    contentWindowInsets: WindowInsets = WindowInsets.systemBars,
+    contentWindowInsets: WindowInsets? = null,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
@@ -107,7 +107,7 @@ fun Material3Scaffold(
         floatingActionButtonPosition = floatingActionButtonPosition,
         containerColor = containerColor,
         contentColor = contentColor,
-        contentWindowInsets = contentWindowInsets,
+        contentWindowInsets = contentWindowInsets ?: systemBarsWithStatusBarFallback(),
         content = content
     )
 }
