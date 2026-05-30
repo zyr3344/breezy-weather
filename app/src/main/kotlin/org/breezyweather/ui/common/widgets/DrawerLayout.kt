@@ -24,12 +24,14 @@ import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.annotation.FloatRange
+import androidx.core.view.ViewCompat
 import androidx.core.view.isNotEmpty
 import org.breezyweather.R
 import org.breezyweather.common.extensions.dpToPx
 import org.breezyweather.common.extensions.getTabletListAdaptiveWidth
 import org.breezyweather.common.extensions.isLandscape
 import org.breezyweather.common.extensions.isRtl
+import org.breezyweather.common.extensions.resolveSystemBarInsets
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -47,12 +49,33 @@ class DrawerLayout @JvmOverloads constructor(
     @FloatRange(from = 0.0, to = 1.0)
     private var mProgress: Float
     private var mProgressAnimator: ValueAnimator? = null
+    private val drawerOuterInsetListeners = mutableSetOf<(Int) -> Unit>()
+
+    var drawerOuterInset: Int = 0
+        private set
 
     init {
         val a = context.obtainStyledAttributes(attrs, R.styleable.DrawerLayout, defStyleAttr, 0)
         mUnfold = a.getBoolean(R.styleable.DrawerLayout_unfold, false) && context.isLandscape
         mProgress = if (mUnfold) 1f else 0f
         a.recycle()
+
+        ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
+            val systemBarInsets = view.resolveSystemBarInsets(
+                rootInsets = insets,
+                symmetricLandscapeHorizontalInsets = false
+            )
+            val newDrawerOuterInset = if (context.isRtl) {
+                systemBarInsets.right
+            } else {
+                systemBarInsets.left
+            }
+            if (drawerOuterInset != newDrawerOuterInset) {
+                drawerOuterInset = newDrawerOuterInset
+                drawerOuterInsetListeners.forEach { it(newDrawerOuterInset) }
+            }
+            insets
+        }
     }
 
     override fun generateDefaultLayoutParams(): LayoutParams {
@@ -61,6 +84,20 @@ class DrawerLayout @JvmOverloads constructor(
 
     override fun generateLayoutParams(attrs: AttributeSet): LayoutParams {
         return LayoutParams(context, attrs)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        ViewCompat.requestApplyInsets(this)
+    }
+
+    fun addDrawerOuterInsetListener(listener: (Int) -> Unit) {
+        drawerOuterInsetListeners.add(listener)
+        listener(drawerOuterInset)
+    }
+
+    fun removeDrawerOuterInsetListener(listener: (Int) -> Unit) {
+        drawerOuterInsetListeners.remove(listener)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

@@ -24,6 +24,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import breezyweather.domain.weather.reference.WeatherCode
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.breezyweather.R
+import org.breezyweather.common.extensions.showCenteredInFullscreenWindow
 import org.breezyweather.ui.theme.resource.ResourceHelper
 import org.breezyweather.ui.theme.resource.providers.ResourceProvider
 
@@ -41,7 +42,8 @@ object MinimalIconDialog {
         MaterialAlertDialogBuilder(context)
             .setTitle(code.name + if (daytime) "_DAY" else "_NIGHT")
             .setView(view)
-            .show()
+            .create()
+            .showCenteredInFullscreenWindow()
     }
 
     @SuppressLint("SetTextI18n")

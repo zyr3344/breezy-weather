@@ -17,8 +17,10 @@
 package org.breezyweather.common.activities
 
 import android.content.Intent
+import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
+import android.view.Display
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -35,15 +37,27 @@ import org.breezyweather.common.snackbar.SnackbarContainer
 
 abstract class BreezyActivity : AppCompatActivity() {
 
+    private val displayListener = object : DisplayManager.DisplayListener {
+        override fun onDisplayAdded(displayId: Int) = Unit
+
+        override fun onDisplayRemoved(displayId: Int) = Unit
+
+        override fun onDisplayChanged(displayId: Int) {
+            if (displayId == Display.DEFAULT_DISPLAY) {
+                window.decorView.post {
+                    applyFullscreenSystemBars()
+                }
+            }
+        }
+    }
+
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
         allowFullScreenLayout()
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            window.setSystemBarStyle(!isDarkMode)
-        }
+        window.setSystemBarStyle(!isDarkMode)
 
         BreezyWeather.instance.addActivity(this)
     }
@@ -57,11 +71,14 @@ abstract class BreezyActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         BreezyWeather.instance.setTopActivity(this)
+        getSystemService(DisplayManager::class.java)?.registerDisplayListener(displayListener, null)
+        applyFullscreenSystemBars()
     }
 
     @CallSuper
     override fun onPause() {
         super.onPause()
+        getSystemService(DisplayManager::class.java)?.unregisterDisplayListener(displayListener)
         BreezyWeather.instance.checkToCleanTopActivity(this)
     }
 
@@ -94,6 +111,16 @@ abstract class BreezyActivity : AppCompatActivity() {
         get() = lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
     val isActivityResumed: Boolean
         get() = lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+
+    protected open fun refreshSystemBarStyle() {
+        window.setSystemBarStyle(!isDarkMode)
+    }
+
+    private fun applyFullscreenSystemBars() {
+        allowFullScreenLayout()
+        refreshSystemBarStyle()
+        window.decorView.requestApplyInsets()
+    }
 
     @Suppress("DEPRECATION")
     private fun allowFullScreenLayout() {

@@ -95,7 +95,8 @@ fun AlertDialogConfirmOnly(
             }
         },
         textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        iconContentColor = MaterialTheme.colorScheme.onSurface
+        iconContentColor = MaterialTheme.colorScheme.onSurface,
+        properties = CenteredDialogProperties
     )
 }
 
@@ -150,7 +151,8 @@ fun AlertDialogLink(
                     style = MaterialTheme.typography.labelLarge
                 )
             }
-        }
+        },
+        properties = CenteredDialogProperties
     )
 }
 
@@ -172,7 +174,7 @@ fun AlertDialogNoPadding(
     titleContentColor: Color = AlertDialogDefaults.titleContentColor,
     textContentColor: Color = AlertDialogDefaults.textContentColor,
     tonalElevation: Dp = AlertDialogDefaults.TonalElevation,
-    properties: DialogProperties = DialogProperties(),
+    properties: DialogProperties = CenteredDialogProperties,
 ) = BasicAlertDialog(
     onDismissRequest = onDismissRequest,
     modifier = modifier,
@@ -397,3 +399,5 @@ private val ButtonsPadding = PaddingValues(start = 24.dp, end = 24.dp)
 
 private val ButtonsMainAxisSpacing = 8.dp
 private val ButtonsCrossAxisSpacing = 12.dp
+
+val CenteredDialogProperties = DialogProperties(decorFitsSystemWindows = false)

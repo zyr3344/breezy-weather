@@ -18,6 +18,7 @@ package org.breezyweather.ui.main.widgets
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import org.breezyweather.R
 
@@ -27,10 +28,25 @@ class FitTabletRecyclerView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : RecyclerView(context, attrs, defStyleAttr) {
 
+    private var systemBarInsetLeft = 0
+    private var systemBarInsetRight = 0
+
+    fun setHorizontalSystemBarInsets(left: Int, right: Int) {
+        systemBarInsetLeft = left
+        systemBarInsetRight = right
+        applyPadding()
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        applyPadding()
+    }
 
+    private fun applyPadding() {
         val paddingHorizontal = resources.getDimensionPixelSize(R.dimen.normal_margin).div(2)
-        setPadding(paddingHorizontal, paddingTop, paddingHorizontal, paddingBottom)
+        updatePadding(
+            left = systemBarInsetLeft + paddingHorizontal,
+            right = systemBarInsetRight + paddingHorizontal
+        )
     }
 }

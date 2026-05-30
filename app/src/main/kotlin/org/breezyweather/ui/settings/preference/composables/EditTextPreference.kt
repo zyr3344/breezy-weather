@@ -44,6 +44,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.breezyweather.R
+import org.breezyweather.ui.common.composables.CenteredDialogProperties
 import org.breezyweather.ui.common.widgets.Material3ExpressiveCardListItem
 import org.breezyweather.ui.common.widgets.defaultCardListItemElevation
 import org.breezyweather.ui.theme.compose.themeRipple
@@ -221,7 +222,8 @@ fun EditTextPreferenceView(
                         style = MaterialTheme.typography.labelLarge
                     )
                 }
-            }
+            },
+            properties = CenteredDialogProperties
         )
     }
 }

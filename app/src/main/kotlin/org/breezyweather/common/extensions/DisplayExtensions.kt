@@ -230,8 +230,10 @@ fun Window.setSystemBarStyle(
             colorSystemBarDark
         }
     } else {
+        statusBarColor = Color.TRANSPARENT
+        navigationBarColor = Color.TRANSPARENT
         isStatusBarContrastEnforced = false
-        isNavigationBarContrastEnforced = true
+        isNavigationBarContrastEnforced = false
     }
 
     // Contrary to the documentation FALSE applies a light foreground color and TRUE a dark foreground color

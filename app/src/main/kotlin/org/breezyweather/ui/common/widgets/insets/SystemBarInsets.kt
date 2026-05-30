@@ -16,34 +16,62 @@
 
 package org.breezyweather.ui.common.widgets.insets
 
-import android.os.Build
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalDensity
-import org.breezyweather.common.extensions.legacyStatusBarHeight
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import org.breezyweather.common.extensions.resolveSystemBarInsets
 
 @Composable
-fun systemBarsWithStatusBarFallback(): WindowInsets {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        return WindowInsets.systemBars
+fun systemBarsWithStatusBarFallback(
+    symmetricLandscapeHorizontalInsets: Boolean? = null,
+): WindowInsets {
+    val view = LocalView.current
+    val density = LocalDensity.current
+    val applySymmetricInsets = symmetricLandscapeHorizontalInsets
+        ?: (view.parent !is DialogWindowProvider)
+    var insets by remember(view, applySymmetricInsets) {
+        mutableStateOf(
+            view.resolveSystemBarInsets(
+                symmetricLandscapeHorizontalInsets = applySymmetricInsets
+            )
+        )
     }
 
-    val context = LocalContext.current
-    val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
-    val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
-    val top = systemBarsPadding.calculateTopPadding().takeIf { it.value != 0f } ?: with(density) {
-        context.legacyStatusBarHeight.toDp()
+    DisposableEffect(view, applySymmetricInsets) {
+        val updateInsets = { rootInsets: WindowInsetsCompat? ->
+            insets = view.resolveSystemBarInsets(
+                rootInsets = rootInsets,
+                symmetricLandscapeHorizontalInsets = applySymmetricInsets
+            )
+        }
+        val layoutChangeListener = android.view.View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            updateInsets(ViewCompat.getRootWindowInsets(view))
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, rootInsets ->
+            updateInsets(rootInsets)
+            rootInsets
+        }
+        view.addOnLayoutChangeListener(layoutChangeListener)
+        view.requestApplyInsets()
+        onDispose {
+            view.removeOnLayoutChangeListener(layoutChangeListener)
+            ViewCompat.setOnApplyWindowInsetsListener(view, null)
+        }
     }
 
     return WindowInsets(
-        left = systemBarsPadding.calculateLeftPadding(layoutDirection),
-        top = top,
-        right = systemBarsPadding.calculateRightPadding(layoutDirection),
-        bottom = systemBarsPadding.calculateBottomPadding()
+        left = with(density) { insets.left.toDp() },
+        top = with(density) { insets.top.toDp() },
+        right = with(density) { insets.right.toDp() },
+        bottom = with(density) { insets.bottom.toDp() }
     )
 }

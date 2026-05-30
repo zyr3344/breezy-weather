@@ -24,6 +24,7 @@ import android.widget.FrameLayout
 import breezyweather.domain.weather.reference.WeatherCode
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.breezyweather.R
+import org.breezyweather.common.extensions.showCenteredInFullscreenWindow
 import org.breezyweather.ui.common.widgets.AnimatableIconView
 import org.breezyweather.ui.theme.resource.ResourceHelper
 import org.breezyweather.ui.theme.resource.providers.ResourceProvider
@@ -42,7 +43,8 @@ object AnimatableIconDialog {
         MaterialAlertDialogBuilder(context)
             .setTitle(code.name + if (daytime) "_DAY" else "_NIGHT")
             .setView(view)
-            .show()
+            .create()
+            .showCenteredInFullscreenWindow()
     }
 
     @SuppressLint("SetTextI18n")

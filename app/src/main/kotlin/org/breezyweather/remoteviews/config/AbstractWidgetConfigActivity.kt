@@ -61,6 +61,7 @@ import org.breezyweather.common.extensions.formatPercent
 import org.breezyweather.common.extensions.getTabletListAdaptiveWidth
 import org.breezyweather.common.extensions.hasPermission
 import org.breezyweather.common.extensions.launchUI
+import org.breezyweather.common.extensions.showCenteredInFullscreenWindow
 import org.breezyweather.common.options.appearance.CalendarHelper
 import org.breezyweather.common.snackbar.Snackbar
 import org.breezyweather.common.snackbar.SnackbarManager
@@ -484,7 +485,8 @@ abstract class AbstractWidgetConfigActivity : BreezyActivity() {
                 .setTitle(R.string.widget_custom_subtitle_alert_box_title)
                 .setMessage(message)
                 .setPositiveButton(R.string.action_done, null)
-                .show()
+                .create()
+                .showCenteredInFullscreenWindow()
         }
         mSubtitleEditText = findViewById<TextInputEditText>(R.id.activity_widget_config_subtitle_inputter).apply {
             addTextChangedListener(object : TextWatcher {

@@ -38,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import org.breezyweather.R
 import org.breezyweather.common.utils.helpers.IntentHelper
+import org.breezyweather.ui.common.composables.CenteredDialogProperties
 import org.breezyweather.ui.main.MainActivity
 import org.breezyweather.ui.theme.ThemeManager
 import org.breezyweather.ui.theme.compose.BreezyWeatherTheme
@@ -113,7 +114,8 @@ object LocationHelpDialog {
                                     }
                                 )
                             }
-                        }
+                        },
+                        properties = CenteredDialogProperties
                     )
                 }
             }

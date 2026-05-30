@@ -66,6 +66,7 @@ import kotlinx.coroutines.delay
 import org.breezyweather.R
 import org.breezyweather.common.activities.BreezyActivity
 import org.breezyweather.common.extensions.currentLocale
+import org.breezyweather.ui.common.composables.CenteredDialogProperties
 import org.breezyweather.ui.common.widgets.Material3Scaffold
 import org.breezyweather.ui.common.widgets.insets.FitStatusBarTopAppBar
 import org.breezyweather.ui.settings.preference.composables.SwitchPreferenceView
@@ -261,7 +262,8 @@ class LiveWallpaperConfigActivity : BreezyActivity() {
                         }
                     },
                     textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    iconContentColor = MaterialTheme.colorScheme.onSurface
+                    iconContentColor = MaterialTheme.colorScheme.onSurface,
+                    properties = CenteredDialogProperties
                 )
             }
         }

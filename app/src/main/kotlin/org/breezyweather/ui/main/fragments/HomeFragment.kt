@@ -48,6 +48,7 @@ import org.breezyweather.common.extensions.isDarkMode
 import org.breezyweather.common.extensions.isMotionReduced
 import org.breezyweather.common.extensions.isTabletDevice
 import org.breezyweather.common.extensions.setSystemBarStyle
+import org.breezyweather.common.extensions.withLandscapeSymmetricHorizontalInsets
 import org.breezyweather.common.options.appearance.BackgroundAnimationMode
 import org.breezyweather.databinding.FragmentHomeBinding
 import org.breezyweather.domain.location.model.getPlace
@@ -185,8 +186,11 @@ class HomeFragment : MainModuleFragment() {
         )
 
         binding.appBar.doOnApplyWindowInsets { view, insets ->
+            val symmetricInsets = insets.withLandscapeSymmetricHorizontalInsets(requireContext())
             view.updatePadding(
-                top = insets.top
+                top = symmetricInsets.top,
+                left = symmetricInsets.left,
+                right = symmetricInsets.right
             )
         }
 
@@ -214,8 +218,11 @@ class HomeFragment : MainModuleFragment() {
             ColorUtils.setAlphaComponent(Color.WHITE, (0.5 * 255).toInt())
         )
         binding.indicator.doOnApplyWindowInsets { view, insets ->
+            val symmetricInsets = insets.withLandscapeSymmetricHorizontalInsets(requireContext())
             view.updatePadding(
-                bottom = insets.bottom
+                left = symmetricInsets.left,
+                right = symmetricInsets.right,
+                bottom = symmetricInsets.bottom
             )
         }
 
@@ -263,7 +270,11 @@ class HomeFragment : MainModuleFragment() {
             }
         }
         binding.recyclerView.doOnApplyWindowInsets { view, insets ->
-            view.updatePadding(bottom = insets.bottom)
+            val symmetricInsets = insets.withLandscapeSymmetricHorizontalInsets(requireContext())
+            binding.recyclerView.setHorizontalSystemBarInsets(symmetricInsets.left, symmetricInsets.right)
+            view.updatePadding(
+                bottom = symmetricInsets.bottom
+            )
         }
         binding.recyclerView.addOnScrollListener(OnScrollListener().also { scrollListener = it })
         binding.recyclerView.setOnTouchListener(indicatorStateListener)

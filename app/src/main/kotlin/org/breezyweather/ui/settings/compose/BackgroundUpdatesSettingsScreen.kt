@@ -56,6 +56,7 @@ import org.breezyweather.common.extensions.powerManager
 import org.breezyweather.common.options.UpdateInterval
 import org.breezyweather.common.utils.helpers.SnackbarHelper
 import org.breezyweather.domain.settings.SettingsManager
+import org.breezyweather.ui.common.composables.CenteredDialogProperties
 import org.breezyweather.ui.common.widgets.Material3Scaffold
 import org.breezyweather.ui.common.widgets.generateCollapsedScrollBehavior
 import org.breezyweather.ui.common.widgets.insets.FitStatusBarTopAppBar
@@ -210,7 +211,8 @@ fun BackgroundSettingsScreen(
                                     style = MaterialTheme.typography.labelLarge
                                 )
                             }
-                        }
+                        },
+                        properties = CenteredDialogProperties
                     )
                 }
             }

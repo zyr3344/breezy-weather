@@ -20,7 +20,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -86,6 +85,7 @@ import org.breezyweather.databinding.ActivityMainBinding
 import org.breezyweather.domain.settings.SettingsChangedMessage
 import org.breezyweather.sources.SourceManager
 import org.breezyweather.ui.common.composables.AlertDialogConfirmOnly
+import org.breezyweather.ui.common.composables.CenteredDialogProperties
 import org.breezyweather.ui.common.composables.AlertDialogNoPadding
 import org.breezyweather.ui.common.composables.LocationPreference
 import org.breezyweather.ui.main.dialogs.LicenseComplianceDialog
@@ -289,20 +289,8 @@ class MainActivity : BreezyActivity(), HomeFragment.Callback, ManagementFragment
             viewModel.checkToUpdate()
         }
 
-        binding.root.doOnApplyWindowInsets { view, insets ->
-            if (this.getResources().configuration.orientation == 2) {
-                // Apply root insets in landscape mode for a consistent look across different
-                // device types and navigation modes.
-                view.updatePadding(
-                    left = insets.left,
-                    right = insets.right
-                )
-            } else {
-                view.updatePadding(
-                    left = 0,
-                    right = 0
-                )
-            }
+        binding.root.doOnApplyWindowInsets { view, _ ->
+            view.updatePadding(left = 0, right = 0)
         }
     }
 
@@ -599,7 +587,8 @@ class MainActivity : BreezyActivity(), HomeFragment.Callback, ManagementFragment
                                     style = MaterialTheme.typography.labelLarge
                                 )
                             }
-                        }
+                        },
+                        properties = CenteredDialogProperties
                     )
                 }
             }
@@ -801,6 +790,10 @@ class MainActivity : BreezyActivity(), HomeFragment.Callback, ManagementFragment
         }
     }
 
+    override fun refreshSystemBarStyle() {
+        updateSystemBarStyle()
+    }
+
     private fun updateSystemBarStyle() {
         if (binding.drawerLayout != null) {
             findHomeFragment()?.setSystemBarStyle()
@@ -815,13 +808,7 @@ class MainActivity : BreezyActivity(), HomeFragment.Callback, ManagementFragment
     }
 
     private fun updateDayNightColors() {
-        if (this.getResources().configuration.orientation == 2) {
-            // Set a black background to keep the background of the system bars black when root
-            // insets are applied in landscape mode.
-            binding.root.setBackgroundColor(Color.BLACK)
-        } else {
-            binding.root.setBackgroundColor(getThemeColor(android.R.attr.colorBackground))
-        }
+        binding.root.setBackgroundColor(getThemeColor(android.R.attr.colorBackground))
     }
 
     private val isOrWillManagementFragmentVisible: Boolean

@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -57,8 +58,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -69,6 +72,9 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -106,6 +112,7 @@ import org.breezyweather.ui.common.composables.AnimatedVisibilitySlideVertically
 import org.breezyweather.ui.common.composables.NotificationCard
 import org.breezyweather.ui.common.composables.SecondarySourcesPreference
 import org.breezyweather.ui.common.decorations.Material3ListItemDecoration
+import org.breezyweather.ui.common.widgets.DrawerLayout
 import org.breezyweather.ui.common.widgets.Material3ExpressiveCardListItem
 import org.breezyweather.ui.common.widgets.Material3Scaffold
 import org.breezyweather.ui.common.widgets.defaultCardListItemElevation
@@ -184,6 +191,39 @@ open class ManagementFragment : MainModuleFragment(), TouchReactor {
         val dialogChooseDebugLocationOpenState = viewModel.dialogChooseDebugLocationOpen.collectAsState()
 
         val locationLoadingState = viewModel.locationListLoading.collectAsState()
+        val isDrawerPane = (requireActivity() as MainActivity).isDrawerLayoutVisible
+        val layoutDirection = LocalLayoutDirection.current
+        val density = LocalDensity.current
+        val drawerOuterInset = rememberDrawerOuterInset()
+        val paneSystemBars = systemBarsWithStatusBarFallback(
+            symmetricLandscapeHorizontalInsets = !isDrawerPane
+        )
+        val paneSystemBarPadding = paneSystemBars.asPaddingValues()
+        val paneOuterStartPadding = if (isDrawerPane) {
+            with(density) { drawerOuterInset.toDp() }
+        } else {
+            paneSystemBarPadding.calculateLeftPadding(layoutDirection)
+        }
+        val paneOuterEndPadding = if (!isDrawerPane) {
+            paneSystemBarPadding.calculateRightPadding(layoutDirection)
+        } else {
+            0.dp
+        }
+        val scaffoldWindowInsets = paneSystemBars.only(
+            if (isDrawerPane) {
+                WindowInsetsSides.Top + WindowInsetsSides.Bottom
+            } else {
+                WindowInsetsSides.Horizontal + WindowInsetsSides.Top + WindowInsetsSides.Bottom
+            }
+        )
+        val topBarWindowInsets = if (isDrawerPane) {
+            WindowInsets(
+                left = with(density) { drawerOuterInset.toDp() },
+                top = paneSystemBarPadding.calculateTopPadding()
+            )
+        } else {
+            paneSystemBars.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+        }
 
         /*
          * We should add a scroll behavior to make the top bar change color when scrolling, but
@@ -213,7 +253,7 @@ open class ManagementFragment : MainModuleFragment(), TouchReactor {
                             )
                         }
                     },
-                    windowInsets = systemBarsWithStatusBarFallback().only(WindowInsetsSides.Top)
+                    windowInsets = topBarWindowInsets
                 )
             },
             floatingActionButton = {
@@ -263,7 +303,8 @@ open class ManagementFragment : MainModuleFragment(), TouchReactor {
                         }
                     }
                 }
-            }
+            },
+            contentWindowInsets = scaffoldWindowInsets
         ) { paddings ->
             if (validLocationListState.value.isNotEmpty()) {
                 Column(
@@ -274,8 +315,8 @@ open class ManagementFragment : MainModuleFragment(), TouchReactor {
                             // landscape mode.
                             top = paddings.calculateTopPadding(),
                             bottom = paddings.calculateBottomPadding(),
-                            start = dimensionResource(R.dimen.normal_margin),
-                            end = dimensionResource(R.dimen.normal_margin)
+                            start = dimensionResource(R.dimen.normal_margin) + paneOuterStartPadding,
+                            end = dimensionResource(R.dimen.normal_margin) + paneOuterEndPadding
                         )
                 ) {
                     if (locationLoadingState.value) {
@@ -376,11 +417,12 @@ open class ManagementFragment : MainModuleFragment(), TouchReactor {
                         .padding(
                             // Do not set a horizontal padding as this adds too much padding in
                             // landscape mode.
-                            PaddingValues(horizontal = dimensionResource(R.dimen.normal_margin)) +
-                                PaddingValues(
-                                    top = paddings.calculateTopPadding(),
-                                    bottom = paddings.calculateBottomPadding() + dimensionResource(R.dimen.large_margin)
-                                )
+                            PaddingValues(
+                                start = dimensionResource(R.dimen.normal_margin) + paneOuterStartPadding,
+                                end = dimensionResource(R.dimen.normal_margin) + paneOuterEndPadding,
+                                top = paddings.calculateTopPadding(),
+                                bottom = paddings.calculateBottomPadding() + dimensionResource(R.dimen.large_margin)
+                            )
                         ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -505,6 +547,34 @@ open class ManagementFragment : MainModuleFragment(), TouchReactor {
 
     override fun setSystemBarStyle() {
         // do nothing.
+    }
+
+    @Composable
+    private fun rememberDrawerOuterInset(): Int {
+        val view = LocalView.current
+        var drawerOuterInset by remember(view) { mutableIntStateOf(0) }
+
+        DisposableEffect(view) {
+            val drawerLayout = generateSequence(view.parent) { parent ->
+                (parent as? View)?.parent
+            }
+                .filterIsInstance<DrawerLayout>()
+                .firstOrNull()
+            if (drawerLayout == null) {
+                onDispose {}
+            } else {
+                val listener: (Int) -> Unit = {
+                    drawerOuterInset = it
+                }
+                drawerLayout.addDrawerOuterInsetListener(listener)
+                androidx.core.view.ViewCompat.requestApplyInsets(drawerLayout)
+                onDispose {
+                    drawerLayout.removeDrawerOuterInsetListener(listener)
+                }
+            }
+        }
+
+        return drawerOuterInset
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
