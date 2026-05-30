@@ -58,6 +58,7 @@ fun SwitchPreferenceView(
     @StringRes summaryOnId: Int,
     @StringRes summaryOffId: Int,
     checked: Boolean,
+    modifier: Modifier = Modifier,
     @DrawableRes iconId: Int? = null,
     withState: Boolean = true,
     enabled: Boolean = true,
@@ -68,6 +69,7 @@ fun SwitchPreferenceView(
     onValueChanged: (Boolean) -> Unit,
 ) = SwitchPreferenceView(
     title = stringResource(titleId),
+    modifier = modifier,
     iconId = iconId,
     summary = { context, it ->
         context.getString(if (it) summaryOnId else summaryOffId)
@@ -87,6 +89,7 @@ fun SwitchPreferenceView(
     title: String,
     summary: (Context, Boolean) -> String?,
     checked: Boolean,
+    modifier: Modifier = Modifier,
     @DrawableRes iconId: Int? = null,
     withState: Boolean = true,
     enabled: Boolean = true,
@@ -102,6 +105,7 @@ fun SwitchPreferenceView(
     // TODO: Redundancy
     if (card) {
         Material3ExpressiveCardListItem(
+            modifier = modifier,
             elevation = if (enabled) defaultCardListItemElevation else 0.dp,
             isFirst = isFirst,
             isLast = isLast
@@ -155,7 +159,7 @@ fun SwitchPreferenceView(
         ListItem(
             colors = colors,
             tonalElevation = 0.dp,
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .alpha(if (enabled) 1f else 0.5f)
                 .clickable(

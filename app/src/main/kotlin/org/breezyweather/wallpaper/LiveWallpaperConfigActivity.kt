@@ -56,7 +56,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -77,12 +76,12 @@ import org.breezyweather.unit.formatting.format
 class LiveWallpaperConfigActivity : BreezyActivity() {
 
     private lateinit var weatherKindValueNow: MutableState<String>
-    private lateinit var weatherKinds: Array<String>
-    private lateinit var weatherKindValues: Array<String>
+    private lateinit var weatherKinds: List<String>
+    private lateinit var weatherKindValues: List<String>
 
     private lateinit var dayNightTypeValueNow: MutableState<String>
-    private lateinit var dayNightTypeKinds: Array<String>
-    private lateinit var dayNightTypeValues: Array<String>
+    private lateinit var dayNightTypeKinds: List<String>
+    private lateinit var dayNightTypeValues: List<String>
 
     private lateinit var animationsEnabledValue: MutableState<Boolean>
 
@@ -91,12 +90,12 @@ class LiveWallpaperConfigActivity : BreezyActivity() {
 
         val liveWallpaperConfigManager = LiveWallpaperConfigManager(this)
         weatherKindValueNow = mutableStateOf(liveWallpaperConfigManager.weatherKind)
-        weatherKinds = resources.getStringArray(R.array.live_wallpaper_weather_kinds)
-        weatherKindValues = resources.getStringArray(R.array.live_wallpaper_weather_kind_values)
+        weatherKinds = resources.getStringArray(R.array.live_wallpaper_weather_kinds).toList()
+        weatherKindValues = resources.getStringArray(R.array.live_wallpaper_weather_kind_values).toList()
 
         dayNightTypeValueNow = mutableStateOf(liveWallpaperConfigManager.dayNightType)
-        dayNightTypeKinds = resources.getStringArray(R.array.live_wallpaper_day_night_types)
-        dayNightTypeValues = resources.getStringArray(R.array.live_wallpaper_day_night_type_values)
+        dayNightTypeKinds = resources.getStringArray(R.array.live_wallpaper_day_night_types).toList()
+        dayNightTypeValues = resources.getStringArray(R.array.live_wallpaper_day_night_type_values).toList()
 
         animationsEnabledValue = mutableStateOf(liveWallpaperConfigManager.animationsEnabled)
 
@@ -109,8 +108,14 @@ class LiveWallpaperConfigActivity : BreezyActivity() {
 
     @Composable
     private fun ContentView() {
-        val context = LocalContext.current
         val dialogOpenState = remember { mutableStateOf(false) }
+        val animationsTitle = stringResource(
+            R.string.parenthesis,
+            stringResource(R.string.settings_main_section_animations),
+            stringResource(R.string.widget_live_wallpaper_animations_enable_dangerous)
+        )
+        val settingsEnabled = stringResource(R.string.settings_enabled)
+        val settingsDisabled = stringResource(R.string.settings_disabled)
         Material3Scaffold(
             topBar = {
                 FitStatusBarTopAppBar(
@@ -141,16 +146,12 @@ class LiveWallpaperConfigActivity : BreezyActivity() {
                 }
                 item {
                     SwitchPreferenceView(
-                        title = context.getString(
-                            R.string.parenthesis,
-                            context.getString(R.string.settings_main_section_animations),
-                            context.getString(R.string.widget_live_wallpaper_animations_enable_dangerous)
-                        ),
+                        title = animationsTitle,
                         summary = { _: Context, enabled: Boolean ->
                             if (enabled) {
-                                "⚠️ ${context.getString(R.string.settings_enabled)}"
+                                "⚠️ $settingsEnabled"
                             } else {
-                                context.getString(R.string.settings_disabled)
+                                settingsDisabled
                             }
                         },
                         checked = animationsEnabledValue.value,
@@ -230,7 +231,10 @@ class LiveWallpaperConfigActivity : BreezyActivity() {
                                     stringResource(
                                         R.string.parenthesis,
                                         stringResource(R.string.action_enable),
-                                        timeLeft.format(decimals = 0, locale = context.currentLocale)
+                                        timeLeft.format(
+                                            decimals = 0,
+                                            locale = this@LiveWallpaperConfigActivity.currentLocale
+                                        )
                                     )
                                 } else {
                                     stringResource(R.string.action_enable)
@@ -241,11 +245,7 @@ class LiveWallpaperConfigActivity : BreezyActivity() {
                     },
                     title = {
                         Text(
-                            stringResource(
-                                R.string.parenthesis,
-                                context.getString(R.string.settings_main_section_animations),
-                                stringResource(R.string.widget_live_wallpaper_animations_enable_dangerous)
-                            )
+                            animationsTitle
                         )
                     },
                     text = {
@@ -272,8 +272,8 @@ class LiveWallpaperConfigActivity : BreezyActivity() {
     @Composable
     private fun Spinner(
         currentVal: MutableState<String>,
-        names: Array<String>,
-        values: Array<String>,
+        names: List<String>,
+        values: List<String>,
         @StringRes titleId: Int,
     ) {
         val expanded = remember { mutableStateOf(false) }
