@@ -23,7 +23,7 @@ configure<ApplicationExtension> {
     namespace = "org.breezyweather"
 
     defaultConfig {
-        applicationId = "com.notmine.weather"
+        applicationId = "org.breezyweather"
         versionCode = 60201
         versionName = "6.2.1"
 
@@ -72,8 +72,8 @@ configure<ApplicationExtension> {
     if (project.rootProject.file("gradle.properties").canRead()) {
         globalProperties.load(project.rootProject.file("gradle.properties").inputStream())
     }
-    buildTypes.configureEach {
-        buildConfigField(
+    buildTypes.forEach { it ->
+        it.buildConfigField(
             "String",
             "REPORT_ISSUE",
             if (Config.isBreezy) {
@@ -94,7 +94,7 @@ configure<ApplicationExtension> {
                     }
             }
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "SOURCE_CODE_LINK",
             if (Config.isBreezy) {
@@ -117,7 +117,7 @@ configure<ApplicationExtension> {
                     }
             }
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "RELEASES_LINK",
             if (Config.isBreezy) {
@@ -126,7 +126,7 @@ configure<ApplicationExtension> {
                 "\"${globalProperties.getProperty("app.releases_link") ?: ""}\""
             }
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "INSTALL_INSTRUCTIONS_LINK",
             if (Config.isBreezy) {
@@ -149,7 +149,7 @@ configure<ApplicationExtension> {
                     }
             }
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "ICON_PACKS_LINK",
             if (Config.isBreezy) {
@@ -158,7 +158,7 @@ configure<ApplicationExtension> {
                 "\"${globalProperties.getProperty("app.icon_packs_link") ?: ""}\""
             }
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "PRIVACY_POLICY_LINK",
             if (Config.isBreezy) {
@@ -181,7 +181,7 @@ configure<ApplicationExtension> {
                     }
             }
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "CONTACT_MATRIX",
             if (Config.isBreezy) {
@@ -190,7 +190,7 @@ configure<ApplicationExtension> {
                 "\"${globalProperties.getProperty("app.matrix_link") ?: ""}\""
             }
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "GITHUB_ORG",
             if (Config.isBreezy) {
@@ -199,7 +199,7 @@ configure<ApplicationExtension> {
                 "\"${globalProperties.getProperty("app.github.org") ?: ""}\""
             }
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "GITHUB_REPO",
             if (Config.isBreezy) {
@@ -208,7 +208,7 @@ configure<ApplicationExtension> {
                 "\"${globalProperties.getProperty("app.github.repo") ?: ""}\""
             }
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "GITHUB_RELEASE_PREFIX",
             if (Config.isBreezy) {
@@ -217,122 +217,122 @@ configure<ApplicationExtension> {
                 "\"${globalProperties.getProperty("app.github.release_prefix") ?: ""}\""
             }
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "DEFAULT_LOCATION_SOURCE",
             "\"${localProperties.getProperty("breezy.source.default_location") ?: "native"}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "DEFAULT_LOCATION_SEARCH_SOURCE",
             "\"${localProperties.getProperty("breezy.source.default_location_search") ?: "openmeteo"}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "DEFAULT_GEOCODING_SOURCE",
             "\"${localProperties.getProperty("breezy.source.default_geocoding") ?: "naturalearth"}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "DEFAULT_FORECAST_SOURCE",
             "\"${localProperties.getProperty("breezy.source.default_weather") ?: "auto"}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "ACCU_WEATHER_KEY",
             "\"${localProperties.getProperty("breezy.accu.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "AEMET_KEY",
             "\"${localProperties.getProperty("breezy.aemet.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "ATMO_AURA_KEY",
             "\"${localProperties.getProperty("breezy.atmoaura.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "ATMO_FRANCE_KEY",
             "\"${localProperties.getProperty("breezy.atmofrance.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "ATMO_GRAND_EST_KEY",
             "\"${localProperties.getProperty("breezy.atmograndest.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "ATMO_HDF_KEY",
             "\"${localProperties.getProperty("breezy.atmohdf.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "ATMO_SUD_KEY",
             "\"${localProperties.getProperty("breezy.atmosud.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "BAIDU_IP_LOCATION_AK",
             "\"${localProperties.getProperty("breezy.baiduip.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "BMKG_KEY",
             "\"${localProperties.getProperty("breezy.bmkg.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "CWA_KEY",
             "\"${localProperties.getProperty("breezy.cwa.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "ECCC_KEY",
             "\"${localProperties.getProperty("breezy.eccc.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "GEO_NAMES_KEY",
             "\"${localProperties.getProperty("breezy.geonames.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "MET_IE_KEY",
             "\"${localProperties.getProperty("breezy.metie.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "MET_OFFICE_KEY",
             "\"${localProperties.getProperty("breezy.metoffice.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "MF_WSFT_JWT_KEY",
             "\"${localProperties.getProperty("breezy.mf.jwtKey") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "MF_WSFT_KEY",
             "\"${localProperties.getProperty("breezy.mf.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "OPEN_WEATHER_KEY",
             "\"${localProperties.getProperty("breezy.openweather.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "PIRATE_WEATHER_KEY",
             "\"${localProperties.getProperty("breezy.pirateweather.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "POLLENINFO_KEY",
             "\"${localProperties.getProperty("breezy.polleninfo.key") ?: ""}\""
         )
-        buildConfigField(
+        it.buildConfigField(
             "String",
             "INFOPLAZA_KEY",
             "\"${localProperties.getProperty("breezy.infoplaza.key") ?: ""}\""
@@ -355,12 +355,20 @@ configure<ApplicationExtension> {
         getByName("basic") {
             kotlin.directories += "src/src_nonfreenet"
             res.directories += "src/res_nonfreenet"
-            res.directories += "src/res_breezy"
+            if (Config.isBreezy) {
+                res.directories += "src/res_breezy"
+            } else {
+                res.directories += "src/res_fork"
+            }
         }
         getByName("freenet") {
             kotlin.directories += "src/src_freenet"
             res.directories += "src/res_freenet"
-            res.directories += "src/res_breezy"
+            if (Config.isBreezy) {
+                res.directories += "src/res_breezy"
+            } else {
+                res.directories += "src/res_fork"
+            }
         }
     }
 

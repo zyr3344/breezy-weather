@@ -88,7 +88,6 @@ import org.breezyweather.ui.common.composables.AlertDialogConfirmOnly
 import org.breezyweather.ui.common.composables.CenteredDialogProperties
 import org.breezyweather.ui.common.composables.AlertDialogNoPadding
 import org.breezyweather.ui.common.composables.LocationPreference
-import org.breezyweather.ui.main.dialogs.LicenseComplianceDialog
 import org.breezyweather.ui.main.fragments.HomeFragment
 import org.breezyweather.ui.main.fragments.ManagementFragment
 import org.breezyweather.ui.main.fragments.PushedManagementFragment
@@ -282,12 +281,7 @@ class MainActivity : BreezyActivity(), HomeFragment.Callback, ManagementFragment
     override fun onStart() {
         super.onStart()
 
-        if (BreezyWeather.instance.isImpersonatingBreezyWeather) {
-            viewModel.emptyLocationListFake()
-            LicenseComplianceDialog.show(this)
-        } else {
-            viewModel.checkToUpdate()
-        }
+        viewModel.checkToUpdate()
 
         binding.root.doOnApplyWindowInsets { view, _ ->
             view.updatePadding(left = 0, right = 0)

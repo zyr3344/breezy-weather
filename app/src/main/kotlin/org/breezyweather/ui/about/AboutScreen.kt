@@ -99,6 +99,10 @@ internal fun AboutScreen(
     val uriHandler = LocalUriHandler.current
     val linkToOpen = rememberSaveable { mutableStateOf("") }
     val dialogLinkOpenState = rememberSaveable { mutableStateOf(false) }
+    val appUpdateAvailableText = stringResource(R.string.notification_app_update_available)
+    val downloadText = stringResource(R.string.action_download)
+    val noNewUpdatesText = stringResource(R.string.about_no_new_updates)
+    val updateCheckEolText = stringResource(R.string.about_update_check_eol)
 
     val locale = context.currentLocale
     val language = locale.language
@@ -113,12 +117,7 @@ internal fun AboutScreen(
 
     val contactLinks = buildList {
         BuildConfig.SOURCE_CODE_LINK.takeIf {
-            it.startsWith("https://") &&
-                (
-                    !BuildConfig.SOURCE_CODE_LINK.contains("breezy", ignoreCase = true) ||
-                        BreezyWeather.instance.isSignedByBreezy ||
-                        BreezyWeather.instance.debugMode
-                    )
+            it.startsWith("https://")
         }?.let {
             add(
                 AboutAppLinkItem(
@@ -131,12 +130,7 @@ internal fun AboutScreen(
             )
         }
         BuildConfig.CONTACT_MATRIX.takeIf {
-            it.startsWith("https://") &&
-                (
-                    !BuildConfig.CONTACT_MATRIX.contains("breezy", ignoreCase = true) ||
-                        BreezyWeather.instance.isSignedByBreezy ||
-                        BreezyWeather.instance.debugMode
-                    )
+            it.startsWith("https://")
         }?.let {
             add(
                 AboutAppLinkItem(
@@ -154,11 +148,7 @@ internal fun AboutScreen(
         BreezyWeather.instance.isGitHubUpdateCheckerEnabled ||
             (
                 BuildConfig.RELEASES_LINK.isNotEmpty() &&
-                    (
-                        !BuildConfig.RELEASES_LINK.contains("breezy", ignoreCase = true) ||
-                            BreezyWeather.instance.isSignedByBreezy ||
-                            BreezyWeather.instance.debugMode
-                        )
+                    BuildConfig.RELEASES_LINK.startsWith("https://")
                 )
     }
 
@@ -231,10 +221,8 @@ internal fun AboutScreen(
                                                 ) {
                                                     is GetApplicationRelease.Result.NewUpdate -> {
                                                         SnackbarHelper.showSnackbar(
-                                                            context.getString(
-                                                                R.string.notification_app_update_available
-                                                            ),
-                                                            context.getString(R.string.action_download)
+                                                            appUpdateAvailableText,
+                                                            downloadText
                                                         ) {
                                                             uriHandler.openUri(result.release.releaseLink)
                                                         }
@@ -242,15 +230,13 @@ internal fun AboutScreen(
 
                                                     is GetApplicationRelease.Result.NoNewUpdate -> {
                                                         SnackbarHelper.showSnackbar(
-                                                            context.getString(R.string.about_no_new_updates)
+                                                            noNewUpdatesText
                                                         )
                                                     }
 
                                                     is GetApplicationRelease.Result.OsTooOld -> {
                                                         SnackbarHelper.showSnackbar(
-                                                            context.getString(
-                                                                R.string.about_update_check_eol
-                                                            )
+                                                            updateCheckEolText
                                                         )
                                                     }
 

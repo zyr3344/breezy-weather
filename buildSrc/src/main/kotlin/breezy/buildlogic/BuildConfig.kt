@@ -24,5 +24,5 @@ interface BuildConfig {
 }
 
 val Project.Config: BuildConfig get() = object : BuildConfig {
-    override val isBreezy: Boolean = project.hasProperty("breezy")
+    override val isBreezy: Boolean = true
 }

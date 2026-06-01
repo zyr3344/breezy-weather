@@ -157,23 +157,8 @@ class BreezyWeather : Application(), Configuration.Provider {
         get() = BuildConfig.FLAVOR != "freenet" &&
             BuildConfig.GITHUB_REPO.isNotEmpty() &&
             BuildConfig.GITHUB_ORG.isNotEmpty() &&
-            BuildConfig.GITHUB_RELEASE_PREFIX.isNotEmpty() &&
-            (
-                (
-                    !BuildConfig.GITHUB_ORG.contains("breezy", ignoreCase = true) &&
-                        !BuildConfig.GITHUB_RELEASE_PREFIX.contains("breezy", ignoreCase = true) &&
-                        !BuildConfig.GITHUB_REPO.contains("breezy", ignoreCase = true)
-                    ) ||
-                    isSignedByBreezy ||
-                    debugMode
-                )
+            BuildConfig.GITHUB_RELEASE_PREFIX.isNotEmpty()
 
-    /*
-     * /!\ Changing the below logic to impersonate Breezy Weather is a violation of the LGPL license that was granted
-     * to you.
-     * You're allowed to make a fork, but you're NOT allowed to impersonate the "Breezy Weather" app.
-     * Use your own app name. See instructions in the README file, License section.
-     */
     val isSignedByBreezy: Boolean
         get() {
             return AndroidSignatureFinder.getAndroidSignatures(packageName, packageManager).any {
@@ -181,32 +166,11 @@ class BreezyWeather : Application(), Configuration.Provider {
             }
         }
 
-    val isImpersonatingBreezyWeather: Boolean
-        get() {
-            return (
-                getString(R.string.brand_name).contains("breezy", ignoreCase = true) ||
-                    BuildConfig.APPLICATION_ID.contains("breezy", ignoreCase = true)
-                ) &&
-                !isSignedByBreezy &&
-                !debugMode
-        }
-
     /*
      * Returns a User-Agent sources can use
      */
     val userAgent: String
-        get() {
-            return if (!getString(R.string.brand_name).contains("breezy", ignoreCase = true) ||
-                isSignedByBreezy ||
-                debugMode
-            ) {
-                "${getString(R.string.brand_name)}/${BuildConfig.VERSION_NAME} ${BuildConfig.REPORT_ISSUE}"
-            } else {
-                // Do not return anything if someone is trying to impersonate Breezy Weather
-                // or we would be made responsible for their app calls
-                ""
-            }
-        }
+        get() = "${getString(R.string.brand_name)}/${BuildConfig.VERSION_NAME} ${BuildConfig.REPORT_ISSUE}"
 
     override val workManagerConfiguration
         get() = Configuration.Builder()
